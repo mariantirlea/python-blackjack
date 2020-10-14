@@ -3,6 +3,8 @@ from time import sleep
 import os
 
 class Game:
+    PLAYERS_FILE_LOCATION = "data/ListaParticipanți.txt"
+
     __active = True
 
     __next_question = ""
@@ -26,7 +28,7 @@ class Game:
         sleep(0.2)
 
     def __read_players_file(self):
-        print('Players file was read!')
+        print('Players file was read!' + self.PLAYERS_FILE_LOCATION)
 
     def __start_game_with_players(self, number_of_players):
         print("Number of players: " + number_of_players)
