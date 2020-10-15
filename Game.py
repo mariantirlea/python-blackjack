@@ -16,7 +16,7 @@ class Game:
     __next_function = None
 
     def __init__(self):
-        self.__display = Display()
+        self.__display = Display(self)
 
     def set_next_question_and_function(self, question, function):
         self.__next_question = question
@@ -27,13 +27,14 @@ class Game:
         print('Game will exit now...')
         sleep(0.2)
 
-    def __read_players_file(self):
+    def read_players_file(self):
 
         try:
             self.players = FileUtils.read_players_file(self.PLAYERS_FILE_LOCATION)
 
         except (PlayersFileNotFound, PlayersFileIsEmpty) as e:
             print(e.message)
+            sleep(2)
             self.__exit()
 
     def __start_game_with_players(self, number_of_players):
@@ -42,24 +43,10 @@ class Game:
         self.__display.draw_multiple_cards()
         # self.__exit()
 
-    def __check_response_players_file(self, param):
-        if param.lower() == 'y' or param == "":
-            self.__read_players_file()
-
-            self.__set_next_question_and_function(
-                "How many players you want to start with: ", 
-                self.__start_game_with_players
-            )
-
-        elif param.lower() == 'n':
-            print('Closing the game. Players file was not read.')
-            self.__exit()
-        else:
-            print('Invalid option! Correct values (Y/n)')
 
     def start(self):
         self.__display.show_intro()
-        self.__display.show_help(self)
+        self.__display.show_help()
       
         while self.__active:
             user_input = input(self.__next_question)

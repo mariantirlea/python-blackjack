@@ -31,11 +31,12 @@ class Display:
     __columns = 0
     __lines = 0
 
-    def __init__(self):
+    def __init__(self, game):
         if Globals.COLORED:
             # os.system('color F0')
             os.system('mode 135,35')
         self.__get_term_size()
+        self.game = game
     
     def __get_term_size(self):
         term_size = os.get_terminal_size()
@@ -93,7 +94,7 @@ class Display:
         else:
             return text
 
-    def show_help(self, game):
+    def show_help(self):
         self.clear()
 
         print(self.__center_multiple_lines((
@@ -108,14 +109,18 @@ class Display:
             "Press enter key to continue"
         )))
 
-        game.set_next_question_and_function(
+        self.game.set_next_question_and_function(
             "", 
             self.show_players_page
         )
 
     def show_players_page(self, param):
-        print('Players page')
+        self.game.read_players_file()
 
+        print("Blackjack game will start with {} players".format(len(self.game.players)))
+
+        
+  
     def __center_multiple_lines(self, lines):
         whole_text = '\n' * int((self.__lines - len(lines)) / 2 - 1)
 

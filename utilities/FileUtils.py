@@ -3,12 +3,15 @@ from os import path
 import re
 from utilities.Exceptions import PlayersFileNotFound, PlayersFileIsEmpty
 from entity.Player import Player
+from utilities.Globals import Globals
 
 class FileUtils:
 
     @staticmethod
     def read_players_file(filename):
-        print('We start reading the players file: ' + filename)
+
+        if Globals.DEBUG:
+            print('We start reading the players file: ' + filename)
 
         if not path.exists(filename):
             raise PlayersFileNotFound
@@ -22,12 +25,15 @@ class FileUtils:
             result = re.search(regex_player_line, line)
             
             if result == None:
-                print('No match')
+                if Globals.DEBUG:
+                    print('No match')
             else:
                 if len(result.groups()) != 5:
-                    print('No match')
+                    if Globals.DEBUG:
+                        print('No match')
                 else:
-                    print(result.groups())
+                    if Globals.DEBUG:
+                        print(result.groups())
 
                     [firstname, lastname, age, country, money] = result.groups()
 
@@ -39,10 +45,14 @@ class FileUtils:
                     )
 
                     players.append(player)
-                    print("Player: " + str(player))
+
+                    if Globals.DEBUG:    
+                        print("Player: " + str(player))
             
         if not players:
             raise PlayersFileIsEmpty()
 
-        print('Players file was read with {} players'.format(len(players)))
+        if Globals.DEBUG:
+            print('Players file was read with {} players'.format(len(players)))
+
         return players
