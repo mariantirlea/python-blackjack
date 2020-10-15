@@ -5,4 +5,4 @@
 
 Start command:
 
-`python start.py`
+`python Start.py` or `Start.py` directly
