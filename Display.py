@@ -1,6 +1,7 @@
 import os
 from time import sleep
 from utilities.Globals import Globals
+from termcolor import colored
 
 class Display:
     INTRO = \
@@ -31,10 +32,10 @@ class Display:
     __lines = 0
 
     def __init__(self):
-        self.__get_term_size()
         if Globals.COLORED:
-            os.system('color F0')
-            os.system('mode 135,50')
+            # os.system('color F0')
+            os.system('mode 135,35')
+        self.__get_term_size()
     
     def __get_term_size(self):
         term_size = os.get_terminal_size()
@@ -51,7 +52,11 @@ class Display:
         print('\n' * int(top_offset - 1))
                 
         for intro_line in intro_lines:
-            print(self.__center_line(intro_line))
+            if Globals.COLORED:
+                print(colored(self.__center_line(intro_line), "red"))
+            else:
+                print(self.__center_line(intro_line))
+
             sleep(delay)
 
     def show_intro(self):
