@@ -18,7 +18,7 @@ class Game:
     def __init__(self):
         self.__display = Display()
 
-    def __set_next_question_and_function(self, question, function):
+    def set_next_question_and_function(self, question, function):
         self.__next_question = question
         self.__next_function = function
 
@@ -57,22 +57,10 @@ class Game:
         else:
             print('Invalid option! Correct values (Y/n)')
 
-    def __execute_game(self): 
-       
-        self.__set_next_question_and_function(
-            "Do you want to read the players file? (Y/n) ", 
-            self.__check_response_players_file
-        )
-
     def start(self):
         self.__display.show_intro()
-        self.__display.clear()
-        
-        print("Started")
-        sleep(0.2)
-
-        self.__execute_game()
-
+        self.__display.show_help(self)
+      
         while self.__active:
             user_input = input(self.__next_question)
             os.system('cls')

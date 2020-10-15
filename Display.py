@@ -52,10 +52,7 @@ class Display:
         print('\n' * int(top_offset - 1))
                 
         for intro_line in intro_lines:
-            if Globals.COLORED:
-                print(colored(self.__center_line(intro_line), "red"))
-            else:
-                print(self.__center_line(intro_line))
+            print(self.__center_line(self.__color_text(intro_line, Globals.TEXT_COLOR_HEADER)))
 
             sleep(delay)
 
@@ -87,8 +84,45 @@ class Display:
                 print(self.__center_line(Globals.AUTHOR))
                 print("\n\n")
 
-                print(self.__center_line("Loading {}".format("." * (delay_index + 1))))
+                print(self.__color_text(self.__center_line("Loading {}".format("." * (delay_index + 1))), Globals.TEXT_COLOR_HEADER))
                 sleep(1)
+
+    def __color_text(self, text, color):
+        if Globals.COLORED:
+            return colored(text, color)
+        else:
+            return text
+
+    def show_help(self, game):
+        self.clear()
+
+        print(self.__center_multiple_lines((
+            self.__color_text("Welcome to the Blackjack game implemented for the Python course.\n", Globals.TEXT_COLOR),
+            self.__color_text("It is very easy to play ;) Enter the response for the questions on the interface itself\n", Globals.TEXT_COLOR),
+            self.__color_text(" or use the special keyword: exit/restart at anytime during the game.\n", Globals.TEXT_COLOR),
+            "\n",
+            "\n",
+            "Have fun and good luck!\n",
+            "\n",
+            "\n",
+            "Press enter key to continue"
+        )))
+
+        game.set_next_question_and_function(
+            "", 
+            self.show_players_page
+        )
+
+    def show_players_page(self, param):
+        print('Players page')
+
+    def __center_multiple_lines(self, lines):
+        whole_text = '\n' * int((self.__lines - len(lines)) / 2 - 1)
+
+        for line in lines:
+            whole_text = whole_text + self.__center_line(line)
+
+        return whole_text
 
     def __center_line(self, line):
         left_offset = (self.__columns - len(line)) / 2
