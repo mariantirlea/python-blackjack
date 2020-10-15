@@ -1,6 +1,11 @@
-from Display import Display
 from time import sleep
 import os
+
+
+from Display import Display
+from entity.Player import Player
+from utilities.FileUtils import FileUtils
+from utilities.Exceptions import PlayersFileNotFound, PlayersFileIsEmpty
 
 class Game:
     PLAYERS_FILE_LOCATION = "data/ListaParticipanți.txt"
@@ -16,7 +21,7 @@ class Game:
         
         print('Blackjack game by Marian Tîrlea')
         print('Initializing...')
-        sleep(0.5)
+        sleep(0.2)
 
     def __set_next_question_and_function(self, question, function):
         self.__next_question = question
@@ -28,17 +33,13 @@ class Game:
         sleep(0.2)
 
     def __read_players_file(self):
-        print('We start reading the players file: ' + self.PLAYERS_FILE_LOCATION)
 
-        file_handler = open(self.PLAYERS_FILE_LOCATION, 'r') 
-        lines = file_handler.readlines() 
-        
-        count = 0
-        for line in lines: 
-            count = count + 1
-            print("Line{}: {}".format(count, line.strip())) 
+        try:
+            self.players = FileUtils.read_players_file(self.PLAYERS_FILE_LOCATION)
 
-        print('Players file was read!')
+        except (PlayersFileNotFound, PlayersFileIsEmpty) as e:
+            print(e.message)
+            self.__exit()
 
     def __start_game_with_players(self, number_of_players):
         print("Number of players: " + number_of_players)
@@ -68,10 +69,9 @@ class Game:
 
     def start(self):
         print("Started")
-        sleep(0.5)
+        sleep(0.2)
 
         self.__display.clear()
-
         self.__execute_game()
 
         while self.__active:
