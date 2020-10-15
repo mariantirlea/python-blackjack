@@ -1,5 +1,6 @@
 import os.path
 from os import path
+import re
 from utilities.Exceptions import PlayersFileNotFound, PlayersFileIsEmpty
 from entity.Player import Player
 
@@ -17,17 +18,28 @@ class FileUtils:
         
         players = []
         for line in lines: 
-            lines_part = line.strip().split("\t")
+            regex_player_line = "^([^\t]+)\t{1}([^\t]+)\t{1}(\d+)\t{1}([^\t]+)\t{1}(\d+)$"
+            result = re.search(regex_player_line, line)
+            
+            if result == None:
+                print('No match')
+            else:
+                if len(result.groups()) != 5:
+                    print('No match')
+                else:
+                    print(result.groups())
 
-            player = Player(
-                name = "{} {}".format(lines_part[0], lines_part[1]),
-                age = lines_part[2],
-                country = lines_part[3],
-                money = lines_part[4]
-            )
+                    [firstname, lastname, age, country, money] = result.groups()
 
-            players.append(player)
-            print("Player: " + str(player))
+                    player = Player(
+                        "{} {}".format(firstname, lastname),
+                        age,
+                        country,
+                        money
+                    )
+
+                    players.append(player)
+                    print("Player: " + str(player))
             
         if not players:
             raise PlayersFileIsEmpty()

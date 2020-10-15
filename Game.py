@@ -1,13 +1,13 @@
 from time import sleep
 import os
 
-
 from Display import Display
 from entity.Player import Player
 from utilities.FileUtils import FileUtils
 from utilities.Exceptions import PlayersFileNotFound, PlayersFileIsEmpty
 
 class Game:
+
     PLAYERS_FILE_LOCATION = "data/ListaParticipanți.txt"
 
     __active = True
@@ -17,11 +17,6 @@ class Game:
 
     def __init__(self):
         self.__display = Display()
-        self.__display.clear()
-        
-        print('Blackjack game by Marian Tîrlea')
-        print('Initializing...')
-        sleep(0.2)
 
     def __set_next_question_and_function(self, question, function):
         self.__next_question = question
@@ -43,7 +38,9 @@ class Game:
 
     def __start_game_with_players(self, number_of_players):
         print("Number of players: " + number_of_players)
-        self.__exit()
+
+        self.__display.draw_multiple_cards()
+        # self.__exit()
 
     def __check_response_players_file(self, param):
         if param.lower() == 'y' or param == "":
@@ -68,10 +65,12 @@ class Game:
         )
 
     def start(self):
+        self.__display.show_intro()
+        self.__display.clear()
+        
         print("Started")
         sleep(0.2)
 
-        self.__display.clear()
         self.__execute_game()
 
         while self.__active:
@@ -81,7 +80,11 @@ class Game:
             if user_input == 'exit':
                 self.__exit()
                 break
+            elif user_input == 'restart':
+                self.start()
+                break
 
+            self.__display.clear()
             if self.__next_function != None:
                 self.__next_function(user_input)
 
