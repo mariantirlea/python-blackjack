@@ -28,7 +28,17 @@ class Game:
         sleep(0.2)
 
     def __read_players_file(self):
-        print('Players file was read!' + self.PLAYERS_FILE_LOCATION)
+        print('We start reading the players file: ' + self.PLAYERS_FILE_LOCATION)
+
+        file_handler = open(self.PLAYERS_FILE_LOCATION, 'r') 
+        lines = file_handler.readlines() 
+        
+        count = 0
+        for line in lines: 
+            count = count + 1
+            print("Line{}: {}".format(count, line.strip())) 
+
+        print('Players file was read!')
 
     def __start_game_with_players(self, number_of_players):
         print("Number of players: " + number_of_players)
@@ -36,7 +46,6 @@ class Game:
 
     def __check_response_players_file(self, param):
         if param.lower() == 'y' or param == "":
-            print('We start reading the players file...')
             self.__read_players_file()
 
             self.__set_next_question_and_function(
