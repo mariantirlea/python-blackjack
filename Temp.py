@@ -1,5 +1,4 @@
 
-from entity.Card import Card
 from entity.Deck import Deck
 from entity.Player import Player
 
