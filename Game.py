@@ -49,6 +49,7 @@ class Game:
                 self.__exit()
                 break
             elif user_input == 'restart':
+                self.__display.clear()
                 self.start()
                 break
 
