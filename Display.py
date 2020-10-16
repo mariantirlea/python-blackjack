@@ -152,7 +152,7 @@ class Display:
             
             self.game.set_next_question_and_function(
                 "", 
-                None
+                self.__draw_game
             )
 
         else:
@@ -162,6 +162,10 @@ class Display:
                 self.__on_bet_placed
             )
     
+    def __draw_game(self, param):
+
+        self.draw_multiple_cards()
+
     def __on_bet_placed(self, param):
         self.__players_page_message = None
 
@@ -183,8 +187,9 @@ class Display:
         return whole_text
 
     def __center_line(self, line):
-        left_offset = (self.__columns - len(line)) / 2
-        return ("{:"+ str(left_offset) + "}{}").format(" ", line)
+        left_offset = int((self.__columns - len(line)) / 2)
+        
+        return line.rjust(left_offset + len(line))
 
     def __draw_card(self, value = "A", sign = "♥"):
         return self.CARD_TEMPLATE.replace("VV", '{:2}'.format(value)).replace("S", sign)
