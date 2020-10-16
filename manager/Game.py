@@ -1,7 +1,7 @@
 from time import sleep
 import os
 
-from Display import Display
+from manager.Display import Display
 from entity.Player import Player
 from entity.Deck import Deck
 from utilities.FileUtils import FileUtils
