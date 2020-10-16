@@ -163,6 +163,8 @@ class Display:
             )
     
     def __draw_game(self, param):
+        self.game.deck.create()
+        self.game.deck.shuffle()
 
         self.draw_multiple_cards()
 

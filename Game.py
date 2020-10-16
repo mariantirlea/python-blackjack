@@ -3,6 +3,7 @@ import os
 
 from Display import Display
 from entity.Player import Player
+from entity.Deck import Deck
 from utilities.FileUtils import FileUtils
 from utilities.Exceptions import PlayersFileNotFound, PlayersFileIsEmpty
 
@@ -17,6 +18,7 @@ class Game:
 
     def __init__(self):
         self.__display = Display(self)
+        self.deck = Deck()
 
     def set_next_question_and_function(self, question, function):
         self.__next_question = question

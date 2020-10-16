@@ -5,5 +5,8 @@ class Globals:
     TEXT_COLOR = "cyan"
     TEXT_COLOR_HEADER = "red"
 
+    CARD_RED = "red"
+    CARD_BLACK = "white"
+
     INTRO_DELAY_IN_SECONDS = 2
     AUTHOR = "by Marian Tîrlea"
