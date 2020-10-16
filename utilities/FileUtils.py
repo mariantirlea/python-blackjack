@@ -35,13 +35,13 @@ class FileUtils:
                     if Globals.DEBUG:
                         print(result.groups())
 
-                    [firstname, lastname, age, country, money] = result.groups()
+                    [firstname, lastname, age, country, chips] = result.groups()
 
                     player = Player(
                         "{} {}".format(firstname, lastname),
-                        age,
+                        int(age),
                         country,
-                        money
+                        int(chips)
                     )
 
                     players.append(player)

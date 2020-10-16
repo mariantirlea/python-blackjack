@@ -1,7 +1,7 @@
 
 class Globals:
     DEBUG = False
-    COLORED = False
+    COLORED = True
     TEXT_COLOR = "cyan"
     TEXT_COLOR_HEADER = "red"
 

@@ -31,10 +31,13 @@ class Display:
     __columns = 0
     __lines = 0
 
+    __current_bet_player = 0
+    __players_page_message = None
+
     def __init__(self, game):
-        if Globals.COLORED:
+        os.system('mode 135,35')
+        # if Globals.COLORED:
             # os.system('color F0')
-            os.system('mode 135,35')
         self.__get_term_size()
         self.game = game
     
@@ -103,23 +106,73 @@ class Display:
             self.__color_text(" or use the special keyword: exit/restart at anytime during the game.\n", Globals.TEXT_COLOR),
             "\n",
             "\n",
-            "Have fun and good luck!\n",
+            self.__color_text("Have fun and good luck!\n", "white"),
             "\n",
             "\n",
-            "Press enter key to continue"
+            self.__color_text("Press enter key to continue", "white")
         )))
 
+        self.game.read_players_file()
         self.game.set_next_question_and_function(
             "", 
             self.show_players_page
         )
 
     def show_players_page(self, param):
-        self.game.read_players_file()
-
-        print("Blackjack game will start with {} players".format(len(self.game.players)))
-
         
+        lines = [
+            self.__color_text("Blackjack game will start with {} players".format(len(self.game.players)), Globals.TEXT_COLOR),
+            "\n",
+            "\n",
+            "\n"
+            "\n"
+        ]
+        
+        for index in range(len(self.game.players)):
+            player = self.game.players[index]
+
+            bet_text = " bet {} chips".format(player.bet) if player.bet != 0 else " waiting for bet"
+            if index == self.__current_bet_player:
+                lines.append(self.__color_text(">>> {} ({}, {}){}\n".format(player.name, player.age, player.country, bet_text), "white"))
+            else:
+                lines.append(self.__color_text("{} ({}, {}){}\n".format(player.name, player.age, player.country, bet_text), "white"))
+
+        lines.append("\n")
+        lines.append("\n")
+        lines.append("\n")
+
+        if self.__players_page_message != None:
+            lines.append(self.__players_page_message)
+
+        print(self.__center_multiple_lines(lines))
+
+        if(self.__current_bet_player == len(self.game.players)):
+
+            print(self.__center_line(self.__color_text("All bets were placed! Press enter key to continue", "white")))
+            
+            self.game.set_next_question_and_function(
+                "", 
+                None
+            )
+
+        else:
+            current_bet_player = self.game.players[self.__current_bet_player]
+            self.game.set_next_question_and_function(
+                self.__center_line(self.__color_text("{}, you have {} chips available. What is your bet for this game: ".format(current_bet_player.name, current_bet_player.chips), Globals.TEXT_COLOR)), 
+                self.__on_bet_placed
+            )
+    
+    def __on_bet_placed(self, param):
+        self.__players_page_message = None
+
+        if param.isdigit() and int(param) > 0 and int(param) <= self.game.players[self.__current_bet_player].chips:
+            self.game.players[self.__current_bet_player].set_bet(int(param))
+            self.__current_bet_player = self.__current_bet_player + 1
+        else:
+           self.__players_page_message = self.__color_text("Invalid bet. Please enter a value between {} and {}".format("1", str(self.game.players[self.__current_bet_player].chips)), Globals.TEXT_COLOR_HEADER) 
+
+        self.show_players_page(None)
+
   
     def __center_multiple_lines(self, lines):
         whole_text = '\n' * int((self.__lines - len(lines)) / 2 - 1)

@@ -37,13 +37,6 @@ class Game:
             sleep(2)
             self.__exit()
 
-    def __start_game_with_players(self, number_of_players):
-        print("Number of players: " + number_of_players)
-
-        self.__display.draw_multiple_cards()
-        # self.__exit()
-
-
     def start(self):
         self.__display.show_intro()
         self.__display.show_help()
