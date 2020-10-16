@@ -2,10 +2,10 @@ from utilities.Globals import Globals
 from enum import Enum
 
 class CardType(Enum):
-    SPADES =   {'sign': u'\u2664', 'color': Globals.CARD_BLACK}, #♤
-    DIAMONDS = {'sign': u'\u2662', 'color': Globals.CARD_RED},   #♢
-    HEARTS =   {'sign': u'\u2661', 'color': Globals.CARD_RED},   #♡
-    CLUBS =    {'sign': u'\u2663', 'color': Globals.CARD_BLACK}, #♣
+    SPADES =   {'sign': "♠", 'color': Globals.CARD_BLACK},
+    DIAMONDS = {'sign': "♦", 'color': Globals.CARD_RED},
+    HEARTS =   {'sign': "♥", 'color': Globals.CARD_RED},
+    CLUBS =    {'sign': "♣", 'color': Globals.CARD_BLACK},
 
 class Card:
 

@@ -17,6 +17,9 @@ class Player:
     def pick_card(self, deck):
         self.hand.append(deck.pick_card())
 
+    def get_hand(self):
+        return self.hand
+
     def display_hand(self):
         for card in self.hand:
             print(str(card))

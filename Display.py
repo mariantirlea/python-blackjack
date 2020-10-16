@@ -21,11 +21,11 @@ class Display:
     CARD_TEMPLATE = \
 """
 ┌────────┐
-│ VV     │
+│ VL     │
 │ S      │
 │        │
 │      S │
-│     VV │
+│     VR │
 └────────┘
 """
     __columns = 0
@@ -166,7 +166,13 @@ class Display:
         self.game.deck.create()
         self.game.deck.shuffle()
 
-        self.draw_multiple_cards()
+        self.game.players[0].pick_card(self.game.deck)
+        self.game.players[0].pick_card(self.game.deck)
+        self.game.players[0].pick_card(self.game.deck)
+        self.game.players[0].pick_card(self.game.deck)
+
+
+        self.draw_multiple_cards(self.game.players[0].get_hand())
 
     def __on_bet_placed(self, param):
         self.__players_page_message = None
@@ -193,26 +199,20 @@ class Display:
         
         return line.rjust(left_offset + len(line))
 
-    def __draw_card(self, value = "A", sign = "♥"):
-        return self.CARD_TEMPLATE.replace("VV", '{:2}'.format(value)).replace("S", sign)
-        
-    def draw_multiple_cards(self, cards = [
-        {"value" : "A", "sign" : "♥"}, 
-        {"value" : "10", "sign" : "♣"},
-        {"value" : "10", "sign" : "♣"},
-        {"value" : "10", "sign" : "♣"},
-        {"value" : "10", "sign" : "♣"},
-        {"value" : "10", "sign" : "♣"},
-        {"value" : "10", "sign" : "♣"}
+    def __draw_card(self, card):
 
-        ]):
+        lines = self.CARD_TEMPLATE.replace("VL", card.value.ljust(2)).replace("VR", card.value.rjust(2)).replace("S", card.card_type.value[0]['sign']).split("\n")
+        lines = map(lambda element: (self.__color_text(element, card.card_type.value[0]['color'])), lines)
+        return "\n".join(lines)
+        
+    def draw_multiple_cards(self, cards):
 
         offset_x = 0
 
         result = ""
 
         for card in cards:
-            rendered_card = self.__draw_card(card['value'], card['sign'])
+            rendered_card = self.__draw_card(card)
 
             if result == "":
                 result = rendered_card
@@ -223,10 +223,8 @@ class Display:
                 result = ""
                 for i in range(len(lines_existing)):
                     result = result + lines_existing[i][0 : offset_x] + lines_rendered[i] + "\n"
-
-                print(result)
-
-            offset_x = offset_x + 5
+                
+            offset_x = offset_x + 9
 
         print(result)
 
