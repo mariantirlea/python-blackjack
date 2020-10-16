@@ -1,4 +1,5 @@
 from utilities.Globals import Globals
+from manager.Display import Display
 from enum import Enum
 
 
@@ -10,6 +11,28 @@ class CardType(Enum):
 
 
 class Card:
+
+    CARD_TEMPLATE_BACK = \
+"""
+┌────────┐
+│■■    ■■│
+│ -    - │
+│   ■■   │
+│ -    - │
+│■■    ■■│
+└────────┘
+"""
+
+    CARD_TEMPLATE = \
+"""
+┌────────┐
+│ VL     │
+│ S      │
+│        │
+│      S │
+│     VR │
+└────────┘
+"""
 
     VALUES = tuple("A 2 3 4 5 6 7 8 9 10 J Q K".split(' '))
 
@@ -28,3 +51,10 @@ class Card:
 
     def __str__(self):
         return "Card [{}, {}]".format(self.value, self.card_type)
+
+    def draw(self):
+
+        lines = self.CARD_TEMPLATE.replace("VL", self.value.ljust(2)).replace("VR", self.value.rjust(2)).replace("S", self.card_type.value[0]['sign']).split("\n")
+        lines = map(lambda element: (Display.color_text(element, self.card_type.value[0]['color'])), lines)
+
+        return "\n".join(lines)

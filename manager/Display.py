@@ -4,6 +4,7 @@ from utilities.Globals import Globals
 from termcolor import colored
 
 class Display:
+
     INTRO = \
 """
  ▄▄▄▄    ██▓     ▄▄▄       ▄████▄   ██ ▄█▀ ▄▄▄██▀▀▀ ▄▄▄       ▄████▄   ██ ▄█▀
@@ -18,23 +19,19 @@ class Display:
       ░                   ░                                  ░               
 """
 
-    CARD_TEMPLATE = \
-"""
-┌────────┐
-│ VL     │
-│ S      │
-│        │
-│      S │
-│     VR │
-└────────┘
-"""
     __columns = 0
     __lines = 0
 
+    @staticmethod
+    def color_text(text, color):
+        if Globals.COLORED:
+            return colored(text, color)
+        else:
+            return text
+
     def __init__(self, game):
         os.system('mode 135,35')
-        # if Globals.COLORED:
-            # os.system('color F0')
+
         self.__get_term_size()
         self.game = game
     
@@ -50,22 +47,18 @@ class Display:
         print('\n' * int(top_offset - 1))
                 
         for intro_line in intro_lines:
-            print(self.__center_line(self.__color_text(intro_line, Globals.TEXT_COLOR_HEADER)))
+            print(self.__center_line(Display.color_text(intro_line, Globals.TEXT_COLOR_HEADER)))
 
             sleep(delay)
 
     def show_intro(self):
-        intro_lines = self.INTRO.strip().split("\n");
+        intro_lines = self.INTRO.strip().split("\n")
 
         intro_width = len(intro_lines[0])
         intro_height = len(intro_lines)
 
-        if Globals.DEBUG:
-            print(intro_width, intro_height)
-
         if (intro_width > self.__columns) or (intro_height > self.__lines):
-            # os.system('mode '+ intro_width + ',' + intro_height)
-            print("Blackjack")
+            print("Please increase window size!")
         else:
             left_offset = (self.__columns - intro_width) / 2
             top_offset = (self.__lines - intro_height) / 2
@@ -82,28 +75,22 @@ class Display:
                 print(self.__center_line(Globals.AUTHOR))
                 print("\n\n")
 
-                print(self.__color_text(self.__center_line("Loading {}".format("." * (delay_index + 1))), Globals.TEXT_COLOR_HEADER))
+                print(Display.color_text(self.__center_line("Loading {}".format("." * (delay_index + 1))), Globals.TEXT_COLOR_HEADER))
                 sleep(1)
-
-    def __color_text(self, text, color):
-        if Globals.COLORED:
-            return colored(text, color)
-        else:
-            return text
 
     def show_help(self):
         self.clear()
 
         print(self.__center_multiple_lines((
-            self.__color_text("Welcome to the Blackjack game implemented for the Python course.\n", Globals.TEXT_COLOR),
-            self.__color_text("It is very easy to play ;) Enter the response for the questions on the interface itself\n", Globals.TEXT_COLOR),
-            self.__color_text(" or use the special keyword: exit/restart at anytime during the game.\n", Globals.TEXT_COLOR),
+            Display.color_text("Welcome to the Blackjack game implemented for the Python course.\n", Globals.TEXT_COLOR),
+            Display.color_text("It is very easy to play ;) Enter the response for the questions on the interface itself\n", Globals.TEXT_COLOR),
+            Display.color_text(" or use the special keyword: exit/restart at anytime during the game.\n", Globals.TEXT_COLOR),
             "\n",
             "\n",
-            self.__color_text("Have fun and good luck!\n", "white"),
+            Display.color_text("Have fun and good luck!\n", "white"),
             "\n",
             "\n",
-            self.__color_text("Press enter key to continue", "white")
+            Display.color_text("Press enter key to continue", "white")
         )))
 
         self.game.state.read_players_file()
@@ -115,7 +102,7 @@ class Display:
     def show_players_page(self, param):
         
         lines = [
-            self.__color_text("Blackjack game will start with {} players".format(len(self.game.state.players)), Globals.TEXT_COLOR),
+            Display.color_text("Blackjack game will start with {} players".format(len(self.game.state.players)), Globals.TEXT_COLOR),
             "\n",
             "\n",
             "\n"
@@ -127,9 +114,9 @@ class Display:
 
             bet_text = " bet {} chips".format(player.bet) if player.bet != 0 else " waiting for bet"
             if index == self.game.state.current_bet_player:
-                lines.append(self.__color_text(">>> {} ({}, {}){}\n".format(player.name, player.age, player.country, bet_text), "white"))
+                lines.append(Display.color_text(">>> {} ({}, {}){}\n".format(player.name, player.age, player.country, bet_text), "white"))
             else:
-                lines.append(self.__color_text("{} ({}, {}){}\n".format(player.name, player.age, player.country, bet_text), "white"))
+                lines.append(Display.color_text("{} ({}, {}){}\n".format(player.name, player.age, player.country, bet_text), "white"))
 
         lines.append("\n")
         lines.append("\n")
@@ -142,7 +129,7 @@ class Display:
 
         if(self.game.state.current_bet_player == len(self.game.state.players)):
 
-            print(self.__center_line(self.__color_text("All bets were placed! Press enter key to continue", "white")))
+            print(self.__center_line(Display.color_text("All bets were placed! Press enter key to continue", "white")))
             
             self.game.set_next_question_and_function(
                 "", 
@@ -152,7 +139,7 @@ class Display:
         else:
             current_bet_player = self.game.state.players[self.game.state.current_bet_player]
             self.game.set_next_question_and_function(
-                self.__center_line(self.__color_text("{}, you have {} chips available. What is your bet for this game: ".format(current_bet_player.name, current_bet_player.chips), Globals.TEXT_COLOR)), 
+                self.__center_line(Display.color_text("{}, you have {} chips available. What is your bet for this game: ".format(current_bet_player.name, current_bet_player.chips), Globals.TEXT_COLOR)), 
                 self.__on_bet_placed
             )
     
@@ -175,7 +162,7 @@ class Display:
             self.game.state.players[self.game.state.current_bet_player].set_bet(int(param))
             self.game.state.current_bet_player = self.game.state.current_bet_player + 1
         else:
-           self.game.state.players_page_message = self.__color_text("Invalid bet. Please enter a value between {} and {}".format("1", str(self.game.state.players[self.game.state.current_bet_player].chips)), Globals.TEXT_COLOR_HEADER) 
+           self.game.state.players_page_message = Display.color_text("Invalid bet. Please enter a value between {} and {}".format("1", str(self.game.state.players[self.game.state.current_bet_player].chips)), Globals.TEXT_COLOR_HEADER) 
 
         self.show_players_page(None)
 
@@ -192,12 +179,6 @@ class Display:
         left_offset = int((self.__columns - len(line)) / 2)
         
         return line.rjust(left_offset + len(line))
-
-    def __draw_card(self, card):
-
-        lines = self.CARD_TEMPLATE.replace("VL", card.value.ljust(2)).replace("VR", card.value.rjust(2)).replace("S", card.card_type.value[0]['sign']).split("\n")
-        lines = map(lambda element: (self.__color_text(element, card.card_type.value[0]['color'])), lines)
-        return "\n".join(lines)
         
     def draw_multiple_cards(self, cards):
 
@@ -206,7 +187,7 @@ class Display:
         result = ""
 
         for card in cards:
-            rendered_card = self.__draw_card(card)
+            rendered_card = card.draw()
 
             if result == "":
                 result = rendered_card
