@@ -224,7 +224,7 @@ class Display:
                 for i in range(len(lines_existing)):
                     result = result + lines_existing[i][0 : offset_x] + lines_rendered[i] + "\n"
                 
-            offset_x = offset_x + 9
+            offset_x = offset_x + (9 if Globals.COLORED else 5)
 
         print(result)
 
