@@ -3,6 +3,7 @@ from time import sleep
 from utilities.Line import LineHelper, OneColumnLine, TwoColumnsLine
 from utilities.Globals import Globals
 from termcolor import colored
+from manager.GameInternalState import GameInternalState
 
 class Display:
 
@@ -114,7 +115,7 @@ class Display:
             player = self.game.state.players[index]
 
             bet_text = " bet {} chips".format(player.bet) if player.bet != 0 else " waiting for bet"
-            if index == self.game.state.current_bet_player:
+            if index == self.game.state.current_player:
                 lines.append(Display.color_text(">>> {} ({}, {}){}\n".format(player.name, player.age, player.country, bet_text), "white"))
             else:
                 lines.append(Display.color_text("{} ({}, {}){}\n".format(player.name, player.age, player.country, bet_text), "white"))
@@ -128,7 +129,7 @@ class Display:
 
         print(self.__printer_multiple_lines(lines))
 
-        if(self.game.state.current_bet_player == len(self.game.state.players)):
+        if(self.game.state.current_player == len(self.game.state.players)):
 
             print(self.__center_line(Display.color_text("All bets were placed! Press enter key to continue", "white")))
             
@@ -138,9 +139,9 @@ class Display:
             )
 
         else:
-            current_bet_player = self.game.state.players[self.game.state.current_bet_player]
+            current_player = self.game.state.players[self.game.state.current_player]
             self.game.set_next_question_and_function(
-                self.__center_line(Display.color_text("{}, you have {} chips available. What is your bet for this game: ".format(current_bet_player.name, current_bet_player.chips), Globals.TEXT_COLOR)), 
+                self.__center_line(Display.color_text("{}, you have {} chips available. What is your bet for this game: ".format(current_player.name, current_player.chips), Globals.TEXT_COLOR)), 
                 self.__on_bet_placed
             )
     
@@ -148,25 +149,16 @@ class Display:
         self.game.state.deck.create()
         self.game.state.deck.shuffle()
 
-        self.game.state.players[0].pick_card(self.game.state.deck)
-        self.game.state.players[0].pick_card(self.game.state.deck)
-        self.game.state.players[0].pick_card(self.game.state.deck)
-        self.game.state.players[0].pick_card(self.game.state.deck)
-
-        self.game.state.players[1].pick_card(self.game.state.deck)
-        self.game.state.players[2].pick_card(self.game.state.deck)
-        self.game.state.players[3].pick_card(self.game.state.deck)
-
-        self.draw_game_state()
+        self.draw_game_state(None)
 
     def __on_bet_placed(self, param):
         self.game.state.players_page_message = None
 
-        if param.isdigit() and int(param) > 0 and int(param) <= self.game.state.players[self.game.state.current_bet_player].chips:
-            self.game.state.players[self.game.state.current_bet_player].set_bet(int(param))
-            self.game.state.current_bet_player = self.game.state.current_bet_player + 1
+        if param.isdigit() and int(param) > 0 and int(param) <= self.game.state.players[self.game.state.current_player].chips:
+            self.game.state.players[self.game.state.current_player].set_bet(int(param))
+            self.game.state.current_player = self.game.state.current_player + 1
         else:
-           self.game.state.players_page_message = Display.color_text("Invalid bet. Please enter a value between {} and {}".format("1", str(self.game.state.players[self.game.state.current_bet_player].chips)), Globals.TEXT_COLOR_HEADER) 
+           self.game.state.players_page_message = Display.color_text("Invalid bet. Please enter a value between {} and {}".format("1", str(self.game.state.players[self.game.state.current_player].chips)), Globals.TEXT_COLOR_HEADER) 
 
         self.show_players_page(None)
 
@@ -207,14 +199,50 @@ class Display:
 
         return result
 
-    def draw_game_state(self):
+    def draw_game_state(self, param):
         self.clear()
 
-        self.game.state.dealer.pick_card(self.game.state.deck)
-        self.game.state.dealer.pick_card(self.game.state.deck)
-        self.game.state.dealer.pick_card(self.game.state.deck)
-        self.game.state.dealer.pick_card(self.game.state.deck)
+        if self.game.state.internal_state == GameInternalState.NONE:
 
+            self.game.state.dealer.pick_card(self.game.state.deck) 
+            self.game.state.players[0].pick_card(self.game.state.deck)
+            self.game.state.players[1].pick_card(self.game.state.deck)
+            self.game.state.players[2].pick_card(self.game.state.deck)
+            self.game.state.players[3].pick_card(self.game.state.deck)
+
+            self.game.state.internal_state = GameInternalState.FIRST_CARD
+
+            self.__paint_state()
+            sleep(1)
+            self.draw_game_state(None)
+
+        elif self.game.state.internal_state == GameInternalState.FIRST_CARD:
+
+            #mark it as hidden!
+            self.game.state.dealer.pick_card(self.game.state.deck) 
+            self.game.state.players[0].pick_card(self.game.state.deck)
+            self.game.state.players[1].pick_card(self.game.state.deck)
+            self.game.state.players[2].pick_card(self.game.state.deck)
+            self.game.state.players[3].pick_card(self.game.state.deck)
+
+            self.game.state.internal_state = GameInternalState.PLAYING
+
+            self.__paint_state()
+            self.draw_game_state(None)
+
+        else:
+            self.game.state.players[3].pick_card(self.game.state.deck)
+
+            self.__paint_state()
+
+            #ask questions
+            self.game.set_next_question_and_function(
+                self.__center_line("{}, your hand value is {}. What is your next option? H - Hit or S - Stay: ".format("Player", "12")), 
+                self.draw_game_state
+            )
+            
+
+    def __paint_state(self):
         dealer_hand = self.draw_multiple_cards(self.game.state.dealer.get_hand())
 
         lines = [
@@ -262,9 +290,4 @@ class Display:
         for index in range(len(player3_hand)):
             lines.append(TwoColumnsLine(player3_hand[index], player4_hand[index], True))
 
-
         print(LineHelper.draw_lines(self.__columns, lines))
-
-        sleep(10)
-
-  

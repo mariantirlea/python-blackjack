@@ -5,11 +5,14 @@ from utilities.Exceptions import PlayersFileNotFound, PlayersFileIsEmpty
 from utilities.FileUtils import FileUtils
 from entity.Deck import Deck
 from entity.Player import Player
+from manager.GameInternalState import GameInternalState
+
 
 class GameState:
 
-    current_bet_player = 0
+    current_player = 0
     players_page_message = None
+    internal_state = GameInternalState.NONE
 
     def __init__(self, game) -> None:
         self.__game = game
@@ -28,6 +31,8 @@ class GameState:
     def reset(self):
         self.players = []
         self.dealer = Player(name = "Dealer", age = 0, country = "Romania", chips = 0)
-        self.current_bet_player = 0
+        self.current_player = 0
         self.players_page_message = None
         self.deck = Deck()
+
+

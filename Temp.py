@@ -4,6 +4,7 @@ from manager.GameState import GameState
 from entity.Deck import Deck
 from entity.Player import Player
 from manager.Display import Display
+from time import sleep
 
 if __name__ == "__main__":
 
@@ -44,14 +45,14 @@ if __name__ == "__main__":
     g.state.deck.create()
     g.state.deck.shuffle()
 
-    g.state.players[0].pick_card(g.state.deck)
-    g.state.players[0].pick_card(g.state.deck)
-    g.state.players[0].pick_card(g.state.deck)
-    g.state.players[0].pick_card(g.state.deck)
+    # g.state.players[0].pick_card(g.state.deck)
+    # g.state.players[0].pick_card(g.state.deck)
+    # g.state.players[0].pick_card(g.state.deck)
+    # g.state.players[0].pick_card(g.state.deck)
 
-    g.state.players[1].pick_card(g.state.deck)
-    g.state.players[2].pick_card(g.state.deck)
-    g.state.players[3].pick_card(g.state.deck)
+    # g.state.players[1].pick_card(g.state.deck)
+    # g.state.players[2].pick_card(g.state.deck)
+    # g.state.players[3].pick_card(g.state.deck)
 
 
     # g.state.players = g.state.players[:-3]
@@ -61,4 +62,8 @@ if __name__ == "__main__":
     #     for c in p.get_hand():
     #         print(str(c))
 
-    d.draw_game_state()
+    d.draw_game_state(None)
+
+    sleep(5)
+
+
