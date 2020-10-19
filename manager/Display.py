@@ -245,10 +245,11 @@ class Display:
                     self.game.state.current_player = self.game.state.current_player + 1
                     pass
                 elif param.strip().lower() == "s":
+                    current_player.stand = True
                     self.game.state.current_player = self.game.state.current_player + 1
                     pass
 
-            if self.game.state.current_player == 4:
+            if self.game.state.current_player == len(self.game.state.players):
                 self.game.state.current_player = 0
 
             self.game.set_next_question_and_function(
@@ -276,7 +277,8 @@ class Display:
         #append player1 + player2
         if len(self.game.state.players) > 0:
             prefix = ">>> " if self.game.state.current_player == 0 else ""
-            player1_name = Display.color_text("{}{}'s hand ({})".format(prefix, self.game.state.players[0].name, self.game.state.players[0].get_value()), Globals.TEXT_COLOR)
+            suffix = " - Stand" if self.game.state.players[0].stand else ""
+            player1_name = Display.color_text("{}{}'s hand ({}){}".format(prefix, self.game.state.players[0].name, self.game.state.players[0].get_value(), suffix), Globals.TEXT_COLOR)
             player1_hand = self.draw_multiple_cards(self.game.state.players[0].get_hand()).strip().split("\n")
         else:
             player1_hand = [' '] * 10
@@ -284,7 +286,8 @@ class Display:
 
         if len(self.game.state.players) > 1:
             prefix = ">>> " if self.game.state.current_player == 1 else ""
-            player2_name = Display.color_text("{}{}'s hand ({})".format(prefix, self.game.state.players[1].name, self.game.state.players[1].get_value()), Globals.TEXT_COLOR)
+            suffix = " - Stand" if self.game.state.players[1].stand else ""
+            player2_name = Display.color_text("{}{}'s hand ({}){}".format(prefix, self.game.state.players[1].name, self.game.state.players[1].get_value(), suffix), Globals.TEXT_COLOR)
             player2_hand = self.draw_multiple_cards(self.game.state.players[1].get_hand()).strip().split("\n")
         else:
             player2_hand = [' '] * 10
@@ -297,7 +300,8 @@ class Display:
         #append player2 + player3
         if len(self.game.state.players) > 2:
             prefix = ">>> " if self.game.state.current_player == 2 else ""
-            player3_name = Display.color_text("{}{}'s hand ({})".format(prefix, self.game.state.players[2].name, self.game.state.players[2].get_value()), Globals.TEXT_COLOR)
+            suffix = " - Stand" if self.game.state.players[2].stand else ""
+            player3_name = Display.color_text("{}{}'s hand ({}){}".format(prefix, self.game.state.players[2].name, self.game.state.players[2].get_value(), suffix), Globals.TEXT_COLOR)
             player3_hand = self.draw_multiple_cards(self.game.state.players[2].get_hand()).strip().split("\n")
         else:
             player3_hand = [' '] * 10
@@ -305,7 +309,8 @@ class Display:
 
         if len(self.game.state.players) > 3:
             prefix = ">>> " if self.game.state.current_player == 3 else ""
-            player4_name = Display.color_text("{}{}'s hand ({})".format(prefix, self.game.state.players[3].name, self.game.state.players[3].get_value()), Globals.TEXT_COLOR)
+            suffix = " - Stand" if self.game.state.players[3].stand else ""
+            player4_name = Display.color_text("{}{}'s hand ({}){}".format(prefix, self.game.state.players[3].name, self.game.state.players[3].get_value(), suffix), Globals.TEXT_COLOR)
             player4_hand = self.draw_multiple_cards(self.game.state.players[3].get_hand()).strip().split("\n")
         else:
             player4_hand = [' '] * 10

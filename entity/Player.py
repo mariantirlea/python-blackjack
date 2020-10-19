@@ -9,6 +9,7 @@ class Player:
         self.bet = 0
         self.__hand = []
         self.__value = 0
+        self.stand = False
 
     def set_bet(self, bet):
         self.bet = bet
