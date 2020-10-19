@@ -4,6 +4,7 @@ from utilities.Globals import Globals
 from utilities.Exceptions import PlayersFileNotFound, PlayersFileIsEmpty
 from utilities.FileUtils import FileUtils
 from entity.Deck import Deck
+from entity.Player import Player
 
 class GameState:
 
@@ -26,6 +27,7 @@ class GameState:
 
     def reset(self):
         self.players = []
+        self.dealer = Player(name = "Dealer", age = 0, country = "Romania", chips = 0)
         self.current_bet_player = 0
         self.players_page_message = None
         self.deck = Deck()

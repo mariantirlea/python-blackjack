@@ -15,11 +15,11 @@ class Card:
     CARD_TEMPLATE_BACK = \
 """
 ┌────────┐
-│■■    ■■│
-│ -    - │
-│   ■■   │
-│ -    - │
-│■■    ■■│
+│XXXXXXXX│
+│XXXXXXXX│
+│XXXXXXXX│
+│XXXXXXXX│
+│XXXXXXXX│
 └────────┘
 """
 

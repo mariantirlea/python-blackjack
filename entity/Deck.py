@@ -18,7 +18,6 @@ class Deck:
 
     def shuffle(self):
         random.shuffle(self.__PACKAGE)
-        # print(str(self))
 
     def pick_card(self):
         return self.__PACKAGE.pop()

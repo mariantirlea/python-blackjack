@@ -1,5 +1,6 @@
 import os
 from time import sleep
+from utilities.Line import LineHelper, OneColumnLine, TwoColumnsLine
 from utilities.Globals import Globals
 from termcolor import colored
 
@@ -81,7 +82,7 @@ class Display:
     def show_help(self):
         self.clear()
 
-        print(self.__center_multiple_lines((
+        print(self.__printer_multiple_lines((
             Display.color_text("Welcome to the Blackjack game implemented for the Python course.\n", Globals.TEXT_COLOR),
             Display.color_text("It is very easy to play ;) Enter the response for the questions on the interface itself\n", Globals.TEXT_COLOR),
             Display.color_text(" or use the special keyword: exit/restart at anytime during the game.\n", Globals.TEXT_COLOR),
@@ -125,7 +126,7 @@ class Display:
         if self.game.state.players_page_message != None:
             lines.append(self.game.state.players_page_message)
 
-        print(self.__center_multiple_lines(lines))
+        print(self.__printer_multiple_lines(lines))
 
         if(self.game.state.current_bet_player == len(self.game.state.players)):
 
@@ -152,8 +153,11 @@ class Display:
         self.game.state.players[0].pick_card(self.game.state.deck)
         self.game.state.players[0].pick_card(self.game.state.deck)
 
+        self.game.state.players[1].pick_card(self.game.state.deck)
+        self.game.state.players[2].pick_card(self.game.state.deck)
+        self.game.state.players[3].pick_card(self.game.state.deck)
 
-        self.draw_multiple_cards(self.game.state.players[0].get_hand())
+        self.draw_game_state()
 
     def __on_bet_placed(self, param):
         self.game.state.players_page_message = None
@@ -167,11 +171,11 @@ class Display:
         self.show_players_page(None)
 
   
-    def __center_multiple_lines(self, lines):
-        whole_text = '\n' * int((self.__lines - len(lines)) / 2 - 1)
+    def __printer_multiple_lines(self, lines, center_h = True, center_v = True):
+        whole_text = "" if not center_v else ('\n' * int((self.__lines - len(lines)) / 2 - 1))
 
         for line in lines:
-            whole_text = whole_text + self.__center_line(line)
+            whole_text = whole_text + (self.__center_line(line) if center_h else line)
 
         return whole_text
 
@@ -201,6 +205,66 @@ class Display:
                 
             offset_x = offset_x + (9 if Globals.COLORED else 5)
 
-        print(result)
+        return result
+
+    def draw_game_state(self):
+        self.clear()
+
+        self.game.state.dealer.pick_card(self.game.state.deck)
+        self.game.state.dealer.pick_card(self.game.state.deck)
+        self.game.state.dealer.pick_card(self.game.state.deck)
+        self.game.state.dealer.pick_card(self.game.state.deck)
+
+        dealer_hand = self.draw_multiple_cards(self.game.state.dealer.get_hand())
+
+        lines = [
+            OneColumnLine(),
+            OneColumnLine(Display.color_text("{}'s hand ({})".format(self.game.state.dealer.name, self.game.state.dealer.get_value()), Globals.TEXT_COLOR), True),
+        ]
+
+        lines.extend(map(lambda element: (OneColumnLine(element, True)), dealer_hand.split("\n")))
+
+        #append player1 + player2
+        if len(self.game.state.players) > 0:
+            player1_name = Display.color_text("{}'s hand ({})".format(self.game.state.players[0].name, self.game.state.players[0].get_value()), Globals.TEXT_COLOR)
+            player1_hand = self.draw_multiple_cards(self.game.state.players[0].get_hand()).strip().split("\n")
+        else:
+            player1_hand = [' '] * 10
+            player1_name = "Empty player spot"
+
+        if len(self.game.state.players) > 1:
+            player2_name = Display.color_text("{}'s hand ({})".format(self.game.state.players[1].name, self.game.state.players[1].get_value()), Globals.TEXT_COLOR)
+            player2_hand = self.draw_multiple_cards(self.game.state.players[1].get_hand()).strip().split("\n")
+        else:
+            player2_hand = [' '] * 10
+            player2_name = "Empty player spot"
+
+        lines.append(TwoColumnsLine(player1_name, player2_name, True))
+        for index in range(len(player1_hand)):
+            lines.append(TwoColumnsLine(player1_hand[index], player2_hand[index], True))
+
+        #append player2 + player3
+        if len(self.game.state.players) > 2:
+            player3_name = Display.color_text("{}'s hand ({})".format(self.game.state.players[2].name, self.game.state.players[2].get_value()), Globals.TEXT_COLOR)
+            player3_hand = self.draw_multiple_cards(self.game.state.players[2].get_hand()).strip().split("\n")
+        else:
+            player3_hand = [' '] * 10
+            player3_name = "Empty player spot"
+
+        if len(self.game.state.players) > 3:
+            player4_name = Display.color_text("{}'s hand ({})".format(self.game.state.players[3].name, self.game.state.players[3].get_value()), Globals.TEXT_COLOR)
+            player4_hand = self.draw_multiple_cards(self.game.state.players[3].get_hand()).strip().split("\n")
+        else:
+            player4_hand = [' '] * 10
+            player4_name = "Empty player spot"
+
+        lines.append(TwoColumnsLine(player3_name, player4_name, True))
+        for index in range(len(player3_hand)):
+            lines.append(TwoColumnsLine(player3_hand[index], player4_hand[index], True))
 
 
+        print(LineHelper.draw_lines(self.__columns, lines))
+
+        sleep(10)
+
+  
