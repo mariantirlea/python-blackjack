@@ -149,6 +149,7 @@ class Display:
         self.game.state.deck.create()
         self.game.state.deck.shuffle()
 
+        self.game.state.current_player = -1
         self.draw_game_state(None)
 
     def __on_bet_placed(self, param):
@@ -226,42 +227,64 @@ class Display:
             self.game.state.players[3].pick_card(self.game.state.deck)
 
             self.game.state.internal_state = GameInternalState.PLAYING
+            self.game.state.current_player = 0
 
             self.__paint_state()
             self.draw_game_state(None)
 
         else:
-            self.game.state.players[3].pick_card(self.game.state.deck)
+
+            #TODO check value to see if we have 21!
+
+            current_player = self.game.state.players[self.game.state.current_player]
+
+            if param != None:
+
+                if param.strip().lower() == "h":
+                    current_player.pick_card(self.game.state.deck)
+                    self.game.state.current_player = self.game.state.current_player + 1
+                    pass
+                elif param.strip().lower() == "s":
+                    self.game.state.current_player = self.game.state.current_player + 1
+                    pass
+
+            if self.game.state.current_player == 4:
+                self.game.state.current_player = 0
+
+            self.game.set_next_question_and_function(
+                self.__center_line(
+                    "{}, your hand value is {}. What is your next option? H - Hit or S - Stay: ".format(current_player.name, current_player.get_value())), 
+                self.draw_game_state
+            )
 
             self.__paint_state()
 
-            #ask questions
-            self.game.set_next_question_and_function(
-                self.__center_line("{}, your hand value is {}. What is your next option? H - Hit or S - Stay: ".format("Player", "12")), 
-                self.draw_game_state
-            )
-            
+
 
     def __paint_state(self):
         dealer_hand = self.draw_multiple_cards(self.game.state.dealer.get_hand())
 
+        prefix = "" if self.game.state.current_player != -1 else ">>> "
+
         lines = [
             OneColumnLine(),
-            OneColumnLine(Display.color_text("{}'s hand ({})".format(self.game.state.dealer.name, self.game.state.dealer.get_value()), Globals.TEXT_COLOR), True),
+            OneColumnLine(Display.color_text("{}{}'s hand ({})".format(prefix, self.game.state.dealer.name, self.game.state.dealer.get_value()), Globals.TEXT_COLOR), True),
         ]
 
         lines.extend(map(lambda element: (OneColumnLine(element, True)), dealer_hand.split("\n")))
 
         #append player1 + player2
         if len(self.game.state.players) > 0:
-            player1_name = Display.color_text("{}'s hand ({})".format(self.game.state.players[0].name, self.game.state.players[0].get_value()), Globals.TEXT_COLOR)
+            prefix = ">>> " if self.game.state.current_player == 0 else ""
+            player1_name = Display.color_text("{}{}'s hand ({})".format(prefix, self.game.state.players[0].name, self.game.state.players[0].get_value()), Globals.TEXT_COLOR)
             player1_hand = self.draw_multiple_cards(self.game.state.players[0].get_hand()).strip().split("\n")
         else:
             player1_hand = [' '] * 10
             player1_name = "Empty player spot"
 
         if len(self.game.state.players) > 1:
-            player2_name = Display.color_text("{}'s hand ({})".format(self.game.state.players[1].name, self.game.state.players[1].get_value()), Globals.TEXT_COLOR)
+            prefix = ">>> " if self.game.state.current_player == 1 else ""
+            player2_name = Display.color_text("{}{}'s hand ({})".format(prefix, self.game.state.players[1].name, self.game.state.players[1].get_value()), Globals.TEXT_COLOR)
             player2_hand = self.draw_multiple_cards(self.game.state.players[1].get_hand()).strip().split("\n")
         else:
             player2_hand = [' '] * 10
@@ -273,14 +296,16 @@ class Display:
 
         #append player2 + player3
         if len(self.game.state.players) > 2:
-            player3_name = Display.color_text("{}'s hand ({})".format(self.game.state.players[2].name, self.game.state.players[2].get_value()), Globals.TEXT_COLOR)
+            prefix = ">>> " if self.game.state.current_player == 2 else ""
+            player3_name = Display.color_text("{}{}'s hand ({})".format(prefix, self.game.state.players[2].name, self.game.state.players[2].get_value()), Globals.TEXT_COLOR)
             player3_hand = self.draw_multiple_cards(self.game.state.players[2].get_hand()).strip().split("\n")
         else:
             player3_hand = [' '] * 10
             player3_name = "Empty player spot"
 
         if len(self.game.state.players) > 3:
-            player4_name = Display.color_text("{}'s hand ({})".format(self.game.state.players[3].name, self.game.state.players[3].get_value()), Globals.TEXT_COLOR)
+            prefix = ">>> " if self.game.state.current_player == 3 else ""
+            player4_name = Display.color_text("{}{}'s hand ({})".format(prefix, self.game.state.players[3].name, self.game.state.players[3].get_value()), Globals.TEXT_COLOR)
             player4_hand = self.draw_multiple_cards(self.game.state.players[3].get_hand()).strip().split("\n")
         else:
             player4_hand = [' '] * 10
