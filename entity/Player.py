@@ -10,6 +10,8 @@ class Player:
         self.__hand = []
         self.__value = 0
         self.stand = False
+        self.won = False
+        self.exceeded = False
 
     def set_bet(self, bet):
         self.bet = bet
@@ -22,17 +24,23 @@ class Player:
     def __calculate_value(self):
 
         self.__value = 0
+    
+        aces_found = 0
         for card in self.__hand:
 
-            if card.value in "2 3 4 5 6 7 8 9".split(" "):
+            if card.value in "2 3 4 5 6 7 8 9 10".split(" "):
                 self.__value = self.__value + int(card.value)
-            elif card.value in "10 J Q K".split(" "):
+            elif card.value in "J Q K".split(" "):
                 self.__value = self.__value + 10
             else:
-                if self.__value + 11 <= 21:
-                    self.__value = self.__value + 11
-                else:
-                    self.__value = self.__value + 1
+                self.__value = self.__value + 11
+                aces_found = aces_found + 1
+
+        for index in range(aces_found):
+            if self.__value <= 21:
+                break
+
+            self.__value = self.__value - 10
 
     def get_hand(self):
         return self.__hand
