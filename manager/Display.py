@@ -236,8 +236,15 @@ class Display:
 
             #TODO check value to see if we have 21!
             current_player = self.game.state.players[self.game.state.current_player]
-            self.__chech_scores(current_player)
 
+            # if current_player.won or current_player.exceeded or current_player.stand:
+
+            #     if self.game.state.current_player < len(self.game.state.players):
+            #         self.game.state.current_player = self.game.state.current_player + 1
+            #         print("return")
+                    
+            #     else:
+            #         print("Done")
 
             if param != None:
 
@@ -248,17 +255,38 @@ class Display:
 
                     if self.__check_if_all_players_are_ready():
                         print("Calculate and exit")
+
+                        for player in self.game.state.players:
+                            print(player)
+
+                        self.game.set_next_question_and_function(
+                            self.__center_line(
+                                ""), 
+                            None
+                        )
                         return
-                    pass
+
                 elif param.strip().lower() == "s":
                     current_player.stand = True
+
                     if self.__check_if_all_players_are_ready():
                         print("Calculate and exit")
-                        return
-                    pass
 
-            if self.game.state.current_player == len(self.game.state.players):
+                        for player in self.game.state.players:
+                            print(player)
+
+                        self.game.set_next_question_and_function(
+                            self.__center_line(
+                                ""), 
+                            None
+                        )
+                        return
+
+
+            if self.game.state.current_player >= len(self.game.state.players):
                 self.game.state.current_player = 0
+
+            current_player = self.game.state.players[self.game.state.current_player]
 
             self.game.set_next_question_and_function(
                 self.__center_line(
@@ -268,32 +296,29 @@ class Display:
 
             self.__paint_state()
 
-    def __chech_scores(self, player):
-        if player.get_value() == 21:
-            print('won')
-            player.won = True
 
-        if player.get_value() >= 21:
-            print('exceeded')
-            player.exceeded = True
+    def __check_if_more_players_to_play(self, current_position):
+
+        for index in range(current_position + 1, len(self.game.state.players)):
+            if not self.game.state.players[index].won and not self.game.state.players[index].stand and not self.game.state.players[index].exceeded:
+                return index
+
+        for index in range(0, current_position):
+            if not self.game.state.players[index].won and not self.game.state.players[index].stand and not self.game.state.players[index].exceeded:
+                return index
+
+        return False
 
     def __check_if_all_players_are_ready(self):
 
-        temp = self.game.state.current_player + 1
+        more_players = self.__check_if_more_players_to_play(self.game.state.current_player)
 
-        while temp < 4:
-            if self.game.state.players[temp].won or self.game.state.players[temp].stand or self.game.state.players[temp].exceeded:
-                temp = self.game.state.current_player + 1
-                continue
-            
-            self.game.state.current_player = temp
-            break
-
-        if temp == 4:
+        if isinstance(more_players, bool) and more_players == False:
             return True
         else:
+            self.game.state.current_player = more_players
             return False
-
+             
     def __paint_state(self):
         dealer_hand = self.draw_multiple_cards(self.game.state.dealer.get_hand())
 
@@ -309,9 +334,8 @@ class Display:
         #append player1 + player2
         if len(self.game.state.players) > 0:
             prefix = ">>> " if self.game.state.current_player == 0 else ""
-            suffix = " - Stand" if self.game.state.players[0].stand else ""
-            suffix = " - Exceeded" if self.game.state.players[0].exceeded else ""
-            suffix = " - Win" if self.game.state.players[0].won else ""
+            suffix = self.get_player_suffix(self.game.state.players[0])
+
             player1_name = Display.color_text("{}{}'s hand ({}){}".format(prefix, self.game.state.players[0].name, self.game.state.players[0].get_value(), suffix), Globals.TEXT_COLOR)
             player1_hand = self.draw_multiple_cards(self.game.state.players[0].get_hand()).strip().split("\n")
         else:
@@ -320,9 +344,8 @@ class Display:
 
         if len(self.game.state.players) > 1:
             prefix = ">>> " if self.game.state.current_player == 1 else ""
-            suffix = " - Stand" if self.game.state.players[1].stand else ""
-            suffix = " - Exceeded" if self.game.state.players[1].exceeded else ""
-            suffix = " - Win" if self.game.state.players[1].won else ""
+            suffix = self.get_player_suffix(self.game.state.players[1])
+
             player2_name = Display.color_text("{}{}'s hand ({}){}".format(prefix, self.game.state.players[1].name, self.game.state.players[1].get_value(), suffix), Globals.TEXT_COLOR)
             player2_hand = self.draw_multiple_cards(self.game.state.players[1].get_hand()).strip().split("\n")
         else:
@@ -336,9 +359,8 @@ class Display:
         #append player2 + player3
         if len(self.game.state.players) > 2:
             prefix = ">>> " if self.game.state.current_player == 2 else ""
-            suffix = " - Stand" if self.game.state.players[2].stand else ""
-            suffix = " - Exceeded" if self.game.state.players[2].exceeded else ""
-            suffix = " - Win" if self.game.state.players[2].won else ""
+            suffix = self.get_player_suffix(self.game.state.players[2])
+
             player3_name = Display.color_text("{}{}'s hand ({}){}".format(prefix, self.game.state.players[2].name, self.game.state.players[2].get_value(), suffix), Globals.TEXT_COLOR)
             player3_hand = self.draw_multiple_cards(self.game.state.players[2].get_hand()).strip().split("\n")
         else:
@@ -347,9 +369,8 @@ class Display:
 
         if len(self.game.state.players) > 3:
             prefix = ">>> " if self.game.state.current_player == 3 else ""
-            suffix = " - Stand" if self.game.state.players[3].stand else ""
-            suffix = " - Exceeded" if self.game.state.players[3].exceeded else ""
-            suffix = " - Win" if self.game.state.players[3].won else ""
+            suffix = self.get_player_suffix(self.game.state.players[3])
+
             player4_name = Display.color_text("{}{}'s hand ({}){}".format(prefix, self.game.state.players[3].name, self.game.state.players[3].get_value(), suffix), Globals.TEXT_COLOR)
             player4_hand = self.draw_multiple_cards(self.game.state.players[3].get_hand()).strip().split("\n")
         else:
@@ -361,3 +382,14 @@ class Display:
             lines.append(TwoColumnsLine(player3_hand[index], player4_hand[index], True))
 
         print(LineHelper.draw_lines(self.__columns, lines))
+
+    def get_player_suffix(self, player):
+
+        if player.stand:
+            return " - Stand"
+        elif player.exceeded:
+            return " - Exceeded"
+        elif player.won:
+            return " - Win"
+        else:
+            return ""

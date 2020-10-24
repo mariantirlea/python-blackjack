@@ -20,6 +20,15 @@ class Player:
     def pick_card(self, deck):
         self.__hand.append(deck.pick_card())
         self.__calculate_value()
+        self.__chech_score()
+
+
+    def __chech_score(self):
+        if self.__value == 21:
+            self.won = True
+
+        if self.__value > 21:
+            self.exceeded = True
 
     def __calculate_value(self):
 
@@ -53,4 +62,4 @@ class Player:
             print(str(card))
 
     def __str__(self):
-        return "Player [{}, {}, {}, {}]".format(self.name, self.age, self.country, self.chips)
+        return "Player [{}, {}, {}, {}, Hand value: {}, Stand: {}, Exceeded: {}, Won: {}]".format(self.name, self.age, self.country, self.chips, self.__value, self.stand, self.exceeded, self.won)
