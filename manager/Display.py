@@ -326,11 +326,11 @@ class Display:
             
             for player in self.game.state.players:
                 if player.get_value() == 21:
+                    max = player.get_value()
                     self.game.state.winner = self.game.state.winner + " " + player.name + " is a winner!"
                 elif player.get_value() < 21:
                     if player.get_value() >= max:
                         max = player.get_value()
-                        position = index
 
                 index = index + 1
         
@@ -346,6 +346,7 @@ class Display:
 
             for player in self.game.state.players:
                 if player.get_value() == 21:
+                    max = player.get_value()
                     self.game.state.winner = self.game.state.winner + " " + player.name + " is a winner!"
                 elif player.get_value() < 21:
                     if player.get_value() >= max:
