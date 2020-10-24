@@ -202,6 +202,8 @@ class Display:
 
     def __handle_play_again(self, param):
 
+        self.game.state.write_state()
+
         if param.lower() == 'y':
             self.game.state.reset()
             self.game.start()
@@ -321,13 +323,12 @@ class Display:
 
         if self.game.state.dealer.get_value() == 21:
             self.game.state.winner = self.game.state.dealer.name + " is a winner!"
-        
+
         elif self.game.state.dealer.get_value() > 21:
             
             for player in self.game.state.players:
                 if player.get_value() == 21:
                     max = player.get_value()
-                    self.game.state.winner = self.game.state.winner + " " + player.name + " is a winner!"
                 elif player.get_value() < 21:
                     if player.get_value() >= max:
                         max = player.get_value()
@@ -337,7 +338,9 @@ class Display:
             #seach all players with the same score
             for player in self.game.state.players:
                 if player.get_value() == max:
+                    player.chips = player.chips + player.bet * 2
                     self.game.state.winner = self.game.state.winner + " " + player.name + " is a winner!"
+
         else:
 
             self.game.state.winner = ""
@@ -347,7 +350,6 @@ class Display:
             for player in self.game.state.players:
                 if player.get_value() == 21:
                     max = player.get_value()
-                    self.game.state.winner = self.game.state.winner + " " + player.name + " is a winner!"
                 elif player.get_value() < 21:
                     if player.get_value() >= max:
                         max = player.get_value()
@@ -359,9 +361,12 @@ class Display:
                 #seach all players with the same score
                 for player in self.game.state.players:
                     if player.get_value() == max:
+                        player.chips = player.chips + player.bet * 2
                         self.game.state.winner = self.game.state.winner + " " + player.name + " is a winner!"
+
             else:
                 self.game.state.winner = self.game.state.dealer.name + " is a winner!"
+
 
     def __check_if_more_players_to_play(self, current_position):
 

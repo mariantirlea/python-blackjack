@@ -26,7 +26,10 @@ class GameState:
         except (PlayersFileNotFound, PlayersFileIsEmpty) as e:
             print(e.message)
             sleep(2)
-            self.__game.__exit()
+            self.__game.exit()
+
+    def write_state(self):
+        FileUtils.write_players_file(Globals.PLAYERS_FILE_LOCATION, self.players)
 
     def reset(self):
         self.players = []

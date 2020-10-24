@@ -37,3 +37,19 @@ class FileUtils:
             raise PlayersFileIsEmpty()
 
         return players
+
+    @staticmethod
+    def write_players_file(filename, players):
+
+        file_handler = open(filename, 'w')
+
+        for player in players:
+
+            file_handler.write("{}\t{}\t{}\t{}\t{}\n".format(
+                player.name.split(" ")[0], 
+                player.name.split(" ")[1],
+                player.age,
+                player.country,
+                player.chips
+            ))
+

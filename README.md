@@ -26,4 +26,5 @@ The whole logic was implemented using diferent classes placed in multiple pakage
 
 The parameters of the game are present in the `Globals.py` file.
 
-The input file is placed inside the `data` folder of the app.
+The input file is placed inside the `data` folder of the app. The number of chips is updated after each game!
+
