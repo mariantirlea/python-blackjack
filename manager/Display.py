@@ -219,10 +219,9 @@ class Display:
         if self.game.state.internal_state == GameInternalState.NONE:
 
             self.game.state.dealer.pick_card(self.game.state.deck) 
-            self.game.state.players[0].pick_card(self.game.state.deck)
-            self.game.state.players[1].pick_card(self.game.state.deck)
-            self.game.state.players[2].pick_card(self.game.state.deck)
-            self.game.state.players[3].pick_card(self.game.state.deck)
+
+            for player in self.game.state.players:
+                player.pick_card(self.game.state.deck)
 
             self.game.state.internal_state = GameInternalState.FIRST_CARD
 
@@ -234,10 +233,9 @@ class Display:
 
             #mark it as hidden!
             self.game.state.dealer.pick_card(self.game.state.deck) 
-            self.game.state.players[0].pick_card(self.game.state.deck)
-            self.game.state.players[1].pick_card(self.game.state.deck)
-            self.game.state.players[2].pick_card(self.game.state.deck)
-            self.game.state.players[3].pick_card(self.game.state.deck)
+            
+            for player in self.game.state.players:
+                player.pick_card(self.game.state.deck)
 
             self.game.state.internal_state = GameInternalState.PLAYING
             self.game.state.current_player = 0
