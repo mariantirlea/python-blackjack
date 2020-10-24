@@ -20,10 +20,10 @@ class Game:
         self.__next_question = question
         self.__next_function = function
 
-    def __exit(self):
+    def exit(self):
         self.__active = False
         print('Game will exit now...')
-        sleep(0.2)
+        sleep(0.5)
 
     def start(self):
         self.__display.show_intro()
@@ -34,7 +34,7 @@ class Game:
             self.__display.clear()
 
             if user_input == 'exit':
-                self.__exit()
+                self.exit()
                 break
             elif user_input == 'restart':
                 self.__display.clear()

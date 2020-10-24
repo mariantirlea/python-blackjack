@@ -200,6 +200,17 @@ class Display:
 
         return result
 
+    def __handle_play_again(self, param):
+
+        if param.lower() == 'y':
+            self.game.state.reset()
+            self.game.start()
+            return
+
+        elif param.lower() == 'n':
+            self.game.exit()
+
+
     def draw_game_state(self, param):
         self.clear()
 
@@ -230,21 +241,39 @@ class Display:
             self.game.state.current_player = 0
 
             self.__paint_state()
+            sleep(1)
             self.draw_game_state(None)
+
+        elif self.game.state.internal_state == GameInternalState.DEALER_TURN:
+
+            self.game.set_next_question_and_function(
+                self.__center_line(
+                    ""), 
+                None
+            )
+
+            while self.game.state.dealer.get_value() < 17:
+                self.__paint_state()
+                sleep(1)
+                self.game.state.dealer.pick_card(self.game.state.deck)
+                
+        
+            self.__calculate_final_result()
+
+            self.__paint_state()
+            print(self.__center_line(
+                    self.game.state.winner))
+
+            self.game.set_next_question_and_function(
+                self.__center_line("Do you want to play again? yes (y) or no (n): "), 
+                self.__handle_play_again
+            )
+            return
+
 
         else:
 
-            #TODO check value to see if we have 21!
             current_player = self.game.state.players[self.game.state.current_player]
-
-            # if current_player.won or current_player.exceeded or current_player.stand:
-
-            #     if self.game.state.current_player < len(self.game.state.players):
-            #         self.game.state.current_player = self.game.state.current_player + 1
-            #         print("return")
-                    
-            #     else:
-            #         print("Done")
 
             if param != None:
 
@@ -254,32 +283,19 @@ class Display:
                         current_player.pick_card(self.game.state.deck)
 
                     if self.__check_if_all_players_are_ready():
-                        print("Calculate and exit")
 
-                        for player in self.game.state.players:
-                            print(player)
-
-                        self.game.set_next_question_and_function(
-                            self.__center_line(
-                                ""), 
-                            None
-                        )
+                        self.game.state.internal_state = GameInternalState.DEALER_TURN
+             
+                        self.draw_game_state(None)
                         return
 
                 elif param.strip().lower() == "s":
                     current_player.stand = True
 
                     if self.__check_if_all_players_are_ready():
-                        print("Calculate and exit")
 
-                        for player in self.game.state.players:
-                            print(player)
-
-                        self.game.set_next_question_and_function(
-                            self.__center_line(
-                                ""), 
-                            None
-                        )
+                        self.game.state.internal_state = GameInternalState.DEALER_TURN
+                        self.draw_game_state(None)
                         return
 
 
@@ -296,6 +312,55 @@ class Display:
 
             self.__paint_state()
 
+    def __calculate_final_result(self):
+
+        self.game.state.winner = ""
+        max = 0
+        position = 0
+        index = 0
+
+        if self.game.state.dealer.get_value() == 21:
+            self.game.state.winner = self.game.state.dealer.name + " is a winner!"
+        
+        elif self.game.state.dealer.get_value() > 21:
+            
+            for player in self.game.state.players:
+                if player.get_value() == 21:
+                    self.game.state.winner = self.game.state.winner + " " + player.name + " is a winner!"
+                elif player.get_value() < 21:
+                    if player.get_value() >= max:
+                        max = player.get_value()
+                        position = index
+
+                index = index + 1
+        
+            #seach all players with the same score
+            for player in self.game.state.players:
+                if player.get_value() == max:
+                    self.game.state.winner = self.game.state.winner + " " + player.name + " is a winner!"
+        else:
+
+            self.game.state.winner = ""
+            max = self.game.state.dealer.get_value()
+            position = -1
+
+            for player in self.game.state.players:
+                if player.get_value() == 21:
+                    self.game.state.winner = self.game.state.winner + " " + player.name + " is a winner!"
+                elif player.get_value() < 21:
+                    if player.get_value() >= max:
+                        max = player.get_value()
+                        position = index
+
+                index = index + 1
+        
+            if position >= 0:
+                #seach all players with the same score
+                for player in self.game.state.players:
+                    if player.get_value() == max:
+                        self.game.state.winner = self.game.state.winner + " " + player.name + " is a winner!"
+            else:
+                self.game.state.winner = self.game.state.dealer.name + " is a winner!"
 
     def __check_if_more_players_to_play(self, current_position):
 
@@ -390,6 +455,6 @@ class Display:
         elif player.exceeded:
             return " - Exceeded"
         elif player.won:
-            return " - Win"
+            return " - Blackjack"
         else:
             return ""

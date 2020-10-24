@@ -54,6 +54,9 @@ class Player:
     def get_hand(self):
         return self.__hand
 
+    def clear_hand(self):
+        self.__hand = []
+
     def get_value(self):
         return self.__value
 

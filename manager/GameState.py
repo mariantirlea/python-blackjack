@@ -35,4 +35,9 @@ class GameState:
         self.players_page_message = None
         self.deck = Deck()
 
+        self.current_player = 0
+        self.internal_state = GameInternalState.NONE
+        for player in self.players:
+            player.clear_hand()
+
 

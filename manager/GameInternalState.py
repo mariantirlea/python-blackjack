@@ -6,3 +6,4 @@ class GameInternalState(Enum):
     FIRST_CARD = 1,
     SECOND_CARD = 2,
     PLAYING = 3,
+    DEALER_TURN = 4
